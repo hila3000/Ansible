@@ -1,0 +1,15 @@
+- name: logstash pipeline - from filebeat
+  template:
+    src: simple.j2
+    dest: "/data/logstash/pipelines"
+
+- name: Create a logstash container
+  docker_container:
+    name: "{{ logstash_container_name }}"
+    image: docker.elastic.co/logstash/logstash-oss:6.3.2
+    state: started
+    restart_policy: always
+    networks:
+      - name: "{{ docker_network.Name }}"
+    volumes:
+      - "/data/logstash/pipelines/:/usr/share/logstash/pipeline/:ro"

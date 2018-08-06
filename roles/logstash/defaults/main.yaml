@@ -1,0 +1,2 @@
+---
+logstash_container_name: "logstash"

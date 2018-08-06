@@ -1,0 +1,27 @@
+- name: nginx kibana configuration file
+  template:
+    src: kibana.conf.j2
+    dest:  "/data/nginx/conf.d/kibana.conf"
+
+- htpasswd:
+    path: "/data/nginx/htpasswd"
+    owner: root
+    mode: "0644"
+    name: Hila
+    password: 'hilafish'
+
+- name: Create a nginx container
+  docker_container:
+    name: "{{ nginx_container_name }}"
+    image: nginx
+    ports:
+      - "80:80"
+    state: started
+    user: root
+    restart_policy: always
+    networks:
+      - name: "{{ docker_network.Name }}"
+    volumes:
+      - "/data/nginx/conf.d/:/etc/nginx/conf.d/:ro"
+      - "/data/nginx/htpasswd:/etc/nginx/htpasswd:ro"
+      - "/data/nginx/logs/:/var/log/nginx/"

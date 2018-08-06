@@ -1,0 +1,10 @@
+- hosts: all
+  become: True
+
+  roles:
+   - data_mappings
+   - elasticsearch
+   - kibana
+   - logstash
+   - filebeat
+   - nginx

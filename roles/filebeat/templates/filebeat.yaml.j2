@@ -1,0 +1,13 @@
+filebeat.prospectors:
+- input_type: log
+  paths:
+    - /var/lib/docker/containers/*/*.log
+    - /var/log/docker-host/*/*.log
+  exclude_files: [".gz$"]
+  json.message_key: log
+  json.keys_under_root: true
+  processors:
+  - add_docker_metadata: ~
+
+output.logstash:
+  hosts: ["{{ logstash_container_name }}:5044"]

@@ -1,0 +1,14 @@
+- name: Create a data folder for all containers
+  file:
+    path: "/data/{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - "{{ elasticsearch_container_name }}"
+    - "{{ logstash_container_name }}/pipelines"
+    - "{{ filebeat_container_name }}"
+    - "{{ nginx_container_name }}/conf.d"
+
+- name: Create Docker Network
+  docker_network:
+    name: "{{ docker_network }}"

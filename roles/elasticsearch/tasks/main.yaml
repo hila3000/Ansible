@@ -1,0 +1,17 @@
+- name: grant ansible user permissions on data folder
+  file:
+    path: "/data/{{ elasticsearch_container_name }}"
+    owner: 1000
+    state: directory
+    recurse: yes
+
+- name: Create an elasticsearch container
+  docker_container:
+    name: "{{ elasticsearch_container_name }}"
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+    state: started
+    restart_policy: always
+    networks:
+      - name: "{{ docker_network.Name }}"
+    volumes:
+      - "/data/{{ elasticsearch_container_name }}:/usr/share/elasticsearch/data"
