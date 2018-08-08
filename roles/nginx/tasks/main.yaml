@@ -3,6 +3,11 @@
     src: kibana.conf.j2
     dest:  "/data/nginx/conf.d/kibana.conf"
 
+- name: nginx cerebro configuration file
+  template:
+    src: cerebro.conf.j2
+    dest:  "/data/nginx/conf.d/cerebro.conf"
+
 - htpasswd:
     path: "/data/nginx/htpasswd"
     owner: root
@@ -16,6 +21,8 @@
     image: nginx
     ports:
       - "80:80"
+      - "443:443"
+      - "9000:9000"
     state: started
     user: root
     restart_policy: always
@@ -25,3 +32,9 @@
       - "/data/nginx/conf.d/:/etc/nginx/conf.d/:ro"
       - "/data/nginx/htpasswd:/etc/nginx/htpasswd:ro"
       - "/data/nginx/logs/:/var/log/nginx/"
+      - "/data/nginx/ssl/:/etc/ssl/nginx/:ro"
+
+- name: ssl certificates
+  shell: "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx-selfsigned.key -out nginx-selfsigned.crt -subj /C=IL/ST=IL/L=IL/O=ELK/OU=DevOps/CN=ELK/emailAddress=test.it@test.com"
+  args:
+    chdir: "/data/nginx/ssl/"

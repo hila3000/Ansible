@@ -8,3 +8,6 @@
    - logstash
    - filebeat
    - nginx
+   - mysql
+   - journalbeat
+   - cerebro

@@ -1,0 +1,28 @@
+- name: Create MySQL Master container
+  docker_container:
+    name: "{{ mysql_master_container_name }}"
+    image:  actency/docker-mysql-replication:5.7
+    state: started
+    restart_policy: always
+    env:
+      { "MYSQL_ROOT_PASSWORD": "rootpass", "MYSQL_USER": "user", "MYSQL_PASSWORD": "pass", "MYSQL_DATABASE": "sample", "REPLICATION_USER": "replication_user", "REPLICATION_PASSWORD": "replpass" }
+    networks:
+      - name: "{{ docker_network.Name }}"
+    volumes:
+      - "/data/{{ mysql_master_container_name }}/mysql:/var/lib/mysql"
+
+
+- name: Create MySQL Slave container
+  docker_container:
+    name: "{{ mysql_slave_container_name }}"
+    image:  actency/docker-mysql-replication:5.7
+    state: started
+    restart_policy: always
+    links:
+      - "{{ mysql_master_container_name }}:master"
+    env:
+      { "MYSQL_ROOT_PASSWORD": "rootpass", "MYSQL_USER": "user", "MYSQL_PASSWORD": "pass", "MYSQL_DATABASE": "sample", "REPLICATION_USER": "replication_user", "REPLICATION_PASSWORD": "replpass" }
+    networks:
+      - name: "{{ docker_network.Name }}"
+    volumes:
+      - "/data/{{ mysql_slave_container_name }}/mysql:/var/lib/mysql"
